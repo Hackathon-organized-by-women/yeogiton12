@@ -20,6 +20,22 @@
 >
 
 <br /><br /><br />
+<a class="btn btn-outline-dark mt-auto" href="{% url 'postdelete' post_detail.id %}">게시물 삭제</a>
+
+<div>
+    <form action="{% url 'postlike' post_detail.id %}" method='POST'>
+      {% csrf_token %}
+      {% if user in post_detail.like_users.all %}
+        <input type="submit" value='좋아요 취소'>
+      {% else %}
+        <input type="submit" value='좋아요'>
+      {% endif %}
+    </form>
+</div>
+좋아요 개수 : {{ post_detail.likeNum }}
+
+<br><br><br>
+
 {% for comment in post_detail.comment_set.all %}
 <span class="badge rounded-pill bg-light">{{ comment.date}}</span>
 {{ comment }}
@@ -32,7 +48,9 @@
 <hr />
 {% endfor %}
 
+{% if user.is_authenticated %}
 <form method="POST" action="{% url 'commentcreate' post_detail.id  %}">
+
   {% csrf_token %}
   <div class="form-group">{{ comment_form }}</div>
   <input
@@ -40,4 +58,11 @@
     class="btn btn-primary btn-icon-split btn-sm"
     value="댓글 입력"
   />
+</form>    
+{% csrf_token %}
+    <div class="form-group">
+        {{ comment_form }}
+    </div>
+    <input type="submit" class="btn btn-primary btn-icon-split btn-sm" value="댓글 입력">
 </form>
+{% endif %}
