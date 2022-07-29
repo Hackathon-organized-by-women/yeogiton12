@@ -106,3 +106,7 @@ def create_recomment(requset, post_id, comment_id):
         finished_form.save()
     return redirect('postdetail', post_id)
 
+
+def map(request):
+    return render(request,'map.html') 
+
