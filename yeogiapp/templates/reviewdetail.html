@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review</title>
+    <link rel="stylesheet" href="{%static './css/reviewdetail.css' %}">
+</head>
+<body>
+    <div class="review" style="border: solid 4px #FFC700;">
+        <div class="review-top">
+            <div class="writer-profile">
+                <img src="{%static './image/user.png' %}">
+            </div>
+            <div class="review-user">
+                <div class="review-user-id">{{post_detail.user.username}}</div>
+                <div class="review-date">{{post_detail.date}}</div>
+            </div>
+            <a href="{% url 'postdelete' post_detail.id %}"><button class="review-bin-button" type="button">
+                <img src="{%static './image/bin.png' %}" width="25vh" height="25vh">
+            </button></a>
+            <a href="{% url 'postupdate' post_detail.id %}">수정</a>
+        </div>
+        <div class="review-title">{{post_detail.title}}</div>
+        <div class="review-content">{{post_detail.body}}</div>
+        <img width="70%" height="70%" src="{{post_detail.spacePhoto.url}}" alt="이미지">
+        <div class="review-under">
+            <a href="{% url 'postlike' post_detail.id %}"><img src="{%static './image/star.png' %}"></a>
+            <div class="star-count">{{ post_detail.likeNum }}</div>
+            <!-- <img src="{%static './image/chat.png' %}"> -->
+            <!-- <div class="chat-count">2</div> -->
+        </div>
+        <hr clas="review-line" style="border: solid 2px #FFC700;">
+        {% for comment in post_detail.comment_set.all %}
+    <span class="badge rounded-pill bg-light">{{ comment.date}}</span>    
+    {{ comment }}
+    {% if user == comment.user %}
+
+    <a href="{% url 'commentupdate' comment.id %}"><span class="badge rounded-pill bg-warning" style="float: right;">수정</span></a>
+    <a href="{% url 'commentdelete' comment.id %}"><span class="badge rounded-pill bg-warning" style="float: right;">삭제</span></a>
+    <hr>
+
+    {% endif %}
+    <hr>
+    {%for recom in comment.recomment_set.all%}
+    &nbsp;&nbsp;🐾{{ user.username }}:{{recom}} {{ comment.date }}<br>
+    {% endfor %}
+    <form method="post" action="{% url 'create_recomment' post_id comment.id %}">
+      {%csrf_token%}
+      <!-- {% for recom_form in recomment_form %}
+          {%if recom_form.label != 'Comment' %}
+          {{recom_form.label}} : {{recom_form}}
+          {%endif%}
+      {%endfor%} -->
+      {{ recomment_form }}
+      <input type="hidden" name="comment" value={{comment.id}}>
+      <input type="submit">
+  </form>
+<hr>
+    {% endfor %}
+        {% if user.is_authenticated %}
+        <div class="review-comment">
+            <div class="review-comment-content">
+            <form method="POST" action="{% url 'commentcreate' post_detail.id  %}">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ comment_form }}
+            </div>
+            </div>
+            <a href="{% url 'commentcreate' post_detail.id %}"> <button type="submit" class="review-send-button"><img src="{%static './image/review_send.png' %}"></button></a>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

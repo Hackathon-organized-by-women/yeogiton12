@@ -7,13 +7,20 @@ from django.db.models import Count
 
 # Create your views here.
 def home(request):
+    posts = Post.objects.filter().order_by('-date')
+    return render(request, 'home.html', {'posts':posts})
+
+def map(request):
+    return render(request, 'map.html')
+
+def review(request):
     #posts = Post.objects.all()
     posts = Post.objects.filter().order_by('-date')
     #paginator = Paginator(posts, 5)
     #pagnum = request.GET.get('page')
     #posts = paginator.get_page(pagnum)
 
-    return render(request, 'index.html', {'posts':posts})
+    return render(request, 'review.html', {'posts':posts})
 
 def postcreate(request):
     #request method가 POST일 경우 : 입력값 저장
@@ -32,7 +39,7 @@ def postcreate(request):
 def postdelete(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     post.delete()
-    return redirect('home')
+    return redirect('review')
 
 def postupdate(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
@@ -40,7 +47,7 @@ def postupdate(request, post_id):
         form = PostModelForm(request.POST, request.FILES, instance=post)
         if (form.is_valid()):
             form.save()
-        return redirect('home')
+        return redirect('review')
 
     else:
         form = PostModelForm(instance=post)
@@ -50,7 +57,7 @@ def postdetail(request, post_id):
     post_detail = get_object_or_404(Post, pk=post_id)
     comment_form = CommentModelForm()
     recomment_form = ReCommentForm()
-    return render(request, 'post_detail.html', {'post_detail':post_detail, 'comment_form':comment_form,
+    return render(request, 'reviewdetail.html', {'post_detail':post_detail, 'comment_form':comment_form,
     'post_id':post_id, 'recomment_form':recomment_form,})
 
 def postlike(request, post_id):
