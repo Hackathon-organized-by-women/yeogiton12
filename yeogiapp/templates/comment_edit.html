@@ -1,0 +1,6 @@
+<title>댓글 수정</title>
+<h3>댓글 수정</h3>
+<form method="POST" class="post-form">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit" class="save btn btn-default">수정</button>
+</form>
